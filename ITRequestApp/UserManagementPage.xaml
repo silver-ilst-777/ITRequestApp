@@ -1,0 +1,106 @@
+﻿<Page x:Class="ITRequestApp.UserManagementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
+      Title="Управление пользователями">
+    <Grid Margin="10" Background="#F0F0F0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Создание пользователя -->
+        <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+            <StackPanel>
+                <TextBlock Text="Создать пользователя" Style="{StaticResource HeaderStyle}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <fa:ImageAwesome Grid.Row="0" Grid.Column="0" Icon="User" Width="24" Margin="5" Foreground="#2196F3"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="UsernameTextBox">
+                        <TextBox.Tag>Имя пользователя</TextBox.Tag>
+                    </TextBox>
+                    <fa:ImageAwesome Grid.Row="1" Grid.Column="0" Icon="Lock" Width="24" Margin="5" Foreground="#2196F3"/>
+                    <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="PasswordBox">
+                        <PasswordBox.Tag>Пароль</PasswordBox.Tag>
+                    </PasswordBox>
+                    <fa:ImageAwesome Grid.Row="2" Grid.Column="0" Icon="Building" Width="24" Margin="5" Foreground="#2196F3"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" x:Name="DepartmentComboBox" DisplayMemberPath="Name">
+                        <ComboBox.Tag>Отдел</ComboBox.Tag>
+                    </ComboBox>
+                    <fa:ImageAwesome Grid.Row="3" Grid.Column="0" Icon="Shield" Width="24" Margin="5" Foreground="#2196F3"/>
+                    <ComboBox Grid.Row="3" Grid.Column="1" x:Name="RoleComboBox">
+                        <ComboBoxItem Content="User"/>
+                        <ComboBoxItem Content="Admin"/>
+                        <ComboBox.Tag>Роль</ComboBox.Tag>
+                    </ComboBox>
+                </Grid>
+                <Button x:Name="CreateUserButton" Click="CreateUserButton_Click">
+                    <fa:ImageAwesome Icon="UserPlus" Width="16" Foreground="White"/>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <!-- Список пользователей -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+            <StackPanel>
+                <TextBlock Text="Список пользователей" Style="{StaticResource HeaderStyle}"/>
+                <ListView x:Name="UsersListView" MinHeight="200" AlternationCount="2">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="5"/>
+                            <Style.Triggers>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                    <Setter Property="Background" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="#F5F5F5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Id}"/>
+                            <GridViewColumn Header="Имя" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Отдел" Width="150" DisplayMemberBinding="{Binding DepartmentName}"/>
+                            <GridViewColumn Header="Роль" Width="100" DisplayMemberBinding="{Binding Role}"/>
+                            <GridViewColumn Header="Действия" Width="250">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Click="DeleteUserButton_Click" Tag="{Binding Id}" Background="Transparent" BorderThickness="0" ToolTip="Удалить">
+                                                <fa:ImageAwesome Icon="Trash" Width="16" Foreground="#D32F2F"/>
+                                            </Button>
+                                            <Button Click="ChangeUsernameButton_Click" Tag="{Binding Id}" Background="Transparent" BorderThickness="0" ToolTip="Изменить логин">
+                                                <fa:ImageAwesome Icon="Edit" Width="16" Foreground="#2196F3"/>
+                                            </Button>
+                                            <Button Click="ChangePasswordButton_Click" Tag="{Binding Id}" Background="Transparent" BorderThickness="0" ToolTip="Изменить пароль">
+                                                <fa:ImageAwesome Icon="Lock" Width="16" Foreground="#2196F3"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </Border>
+
+        <!-- Назад -->
+        <Button Grid.Row="2" x:Name="BackButton" Click="BackButton_Click">
+            <fa:ImageAwesome Icon="ArrowLeft" Width="16" Foreground="White"/>
+        </Button>
+    </Grid>
+</Page>

@@ -1,0 +1,260 @@
+﻿<Page x:Class="ITRequestApp.DashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:ITRequestApp"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
+      Title="Тех. поддержка">
+    <Page.Resources>
+        <local:AdminVisibilityConverter x:Key="AdminVisibilityConverter"/>
+        <local:InverseAdminVisibilityConverter x:Key="InverseAdminVisibilityConverter"/>
+        <Style TargetType="TextBlock" x:Key="LabelStyle">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5,0,0,2"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+    </Page.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid Margin="10" Background="#F0F0F0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+
+            <!-- Фильтры -->
+            <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Фильтры" Style="{StaticResource HeaderStyle}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock Text="Фильтр по пользователю" Style="{StaticResource LabelStyle}" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}"/>
+                            <ComboBox x:Name="UserFilterComboBox" MinWidth="150" DisplayMemberPath="Name" FontSize="14" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}"/>
+                        </StackPanel>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="Фильтр по статусу" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="StatusFilterComboBox" MinWidth="150" FontSize="14">
+                                <ComboBoxItem Content="Все"/>
+                                <ComboBoxItem Content="Открыт"/>
+                                <ComboBoxItem Content="Выполняется"/>
+                                <ComboBoxItem Content="Закрыт"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <Button x:Name="ApplyFilterButton" Click="ApplyFilter_Click" ToolTip="Применить фильтры" MinWidth="120" Margin="10,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:ImageAwesome Icon="Filter" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                                <TextBlock Text="Применить"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Новая заявка -->
+            <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Новая заявка" Style="{StaticResource HeaderStyle}"/>
+                    <TextBlock Text="Описание заявки" Style="{StaticResource LabelStyle}"/>
+                    <DockPanel>
+                        <fa:ImageAwesome Icon="FileText" Width="24" Margin="5" Foreground="#2196F3"/>
+                        <TextBox x:Name="DescriptionTextBox" MinHeight="50" AcceptsReturn="True" TextWrapping="Wrap" ToolTip="Введите описание заявки" FontSize="14"/>
+                    </DockPanel>
+                    <TextBlock Text="Номер кабинета" Style="{StaticResource LabelStyle}"/>
+                    <DockPanel>
+                        <fa:ImageAwesome Icon="Building" Width="24" Margin="5" Foreground="#2196F3"/>
+                        <TextBox x:Name="CabinetNumberTextBox" ToolTip="Введите номер кабинета" FontSize="14"/>
+                    </DockPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Прикрепленный файл:" Style="{StaticResource LabelStyle}"/>
+                        <TextBlock x:Name="FilePathTextBlock" Text="Нет файла" Margin="5"/>
+                        <Button x:Name="AttachFileButton" Click="AttachFile_Click" ToolTip="Прикрепить файл" MinWidth="120">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:ImageAwesome Icon="Paperclip" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                                <TextBlock Text="Прикрепить"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="SubmitButton" Click="SubmitRequest_Click" ToolTip="Отправить заявку" MinWidth="120">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:ImageAwesome Icon="PaperPlane" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                                <TextBlock Text="Отправить"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="EditButton" Click="EditRequest_Click" ToolTip="Редактировать заявку" MinWidth="120">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:ImageAwesome Icon="Edit" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                                <TextBlock Text="Редактировать"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Список заявок -->
+            <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Список заявок" Style="{StaticResource HeaderStyle}"/>
+                    <ListView x:Name="RequestsListView" AlternationCount="2" SelectionChanged="RequestsListView_SelectionChanged">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="10"/>
+                                <Style.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                        <Setter Property="Background" Value="White"/>
+                                    </Trigger>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Id}"/>
+                                <GridViewColumn Header="Пользователь" Width="100" DisplayMemberBinding="{Binding UserName}"/>
+                                <GridViewColumn Header="Отдел" Width="100" DisplayMemberBinding="{Binding DepartmentName}"/>
+                                <GridViewColumn Header="Кабинет" Width="100" DisplayMemberBinding="{Binding CabinetNumber}"/>
+                                <GridViewColumn Header="Описание" Width="200" DisplayMemberBinding="{Binding Description}"/>
+                                <GridViewColumn Header="Статус" Width="80" DisplayMemberBinding="{Binding StatusRussian}"/>
+                                <GridViewColumn Header="Файл" Width="80" DisplayMemberBinding="{Binding HasFile}"/>
+                                <GridViewColumn Header="Админ" Width="100" DisplayMemberBinding="{Binding AssignedAdminName}"/>
+                                <GridViewColumn Header="Дата" Width="100" DisplayMemberBinding="{Binding CreatedAt}"/>
+                                <GridViewColumn Header="Действия" Width="150">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Click="ViewFile_Click" Tag="{Binding FilePath}" Background="Transparent" BorderThickness="0" ToolTip="Просмотреть файл">
+                                                <fa:ImageAwesome Icon="Eye" Width="16" Foreground="#2196F3"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            </Border>
+
+            <!-- Комментарии -->
+            <Border Grid.Row="3" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Комментарии" Style="{StaticResource HeaderStyle}"/>
+                    <ListView x:Name="CommentsListView" MinHeight="150" AlternationCount="2">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="10"/>
+                                <Style.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                        <Setter Property="Background" Value="White"/>
+                                    </Trigger>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Пользователь" Width="150" DisplayMemberBinding="{Binding UserName}"/>
+                                <GridViewColumn Header="Комментарий" Width="300" DisplayMemberBinding="{Binding Text}"/>
+                                <GridViewColumn Header="Дата" Width="150" DisplayMemberBinding="{Binding CreatedAt}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <TextBlock Text="Добавить комментарий" Style="{StaticResource LabelStyle}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <DockPanel>
+                            <fa:ImageAwesome Icon="Comment" Width="24" Margin="5" Foreground="#2196F3"/>
+                            <TextBox x:Name="CommentTextBox" MinWidth="300" ToolTip="Введите комментарий" FontSize="14"/>
+                        </DockPanel>
+                        <Button x:Name="AddCommentButton" Click="AddComment_Click" ToolTip="Добавить комментарий" MinWidth="120">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:ImageAwesome Icon="Comment" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                                <TextBlock Text="Добавить"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Действия -->
+            <Border Grid.Row="4" Style="{StaticResource CardStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="AssignButton" Click="AssignButton_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Назначить заявку" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="CheckCircle" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Назначить"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ReassignButton" Click="ReassignButton_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Переназначить заявку" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="UserTimes" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Переназначить"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="DeleteButton" Click="DeleteRequest_Click" Background="#D32F2F" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Удалить заявку" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Trash" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Удалить"/>
+                        </StackPanel>
+                    </Button>
+                    <StackPanel Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}">
+                        <TextBlock Text="Статус" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox x:Name="StatusComboBox" MinWidth="100" SelectionChanged="StatusComboBox_SelectionChanged" FontSize="14">
+                            <ComboBoxItem Content="Открыт"/>
+                            <ComboBoxItem Content="Выполняется"/>
+                            <ComboBoxItem Content="Закрыт"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <Button x:Name="ViewAuditButton" Click="ViewAudit_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Просмотреть аудит" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Eye" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Аудит"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BackupDatabaseButton" Click="BackupDatabase_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Резервное копирование" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Database" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Резерв"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="CompleteRequestButton" Click="CompleteRequestButton_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource InverseAdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Подтвердить выполнение" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Check" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Подтвердить"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ViewAchievementsButton" Click="ViewAchievementsButton_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" ToolTip="Просмотреть достижения" MinWidth="120">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Trophy" Width="16" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Достижения"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Управление пользователями -->
+            <Border Grid.Row="5" Style="{StaticResource CardStyle}" MinHeight="60">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="ManageUsersButton" Click="ManageUsers_Click" Visibility="{Binding CurrentUser.Role, Converter={StaticResource AdminVisibilityConverter}, FallbackValue=Collapsed}" Width="200" Height="50" ToolTip="Управление пользователями" HorizontalAlignment="Left" Margin="10">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Users" Width="24" Margin="0,0,5,0" Foreground="White"/>
+                            <TextBlock Text="Пользователи" FontSize="16"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Text="{Binding CurrentUser.Role}" Style="{StaticResource LabelStyle}" Margin="10,0,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- StatusBar -->
+            <StatusBar Grid.Row="6" Background="#E0E0E0">
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusMessage" Text="Готово" Foreground="#333333"/>
+                </StatusBarItem>
+            </StatusBar>
+        </Grid>
+    </ScrollViewer>
+</Page>
