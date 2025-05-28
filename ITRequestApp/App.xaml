@@ -4,6 +4,37 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Стиль для ComboBoxToggleButton -->
+            <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                <Border x:Name="Border"
+                        Background="Transparent"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        Padding="0"
+                        SnapsToDevicePixels="True">
+                    <Grid>
+                        <Path x:Name="Arrow"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Data="M 0 0 L 4 4 L 8 0 Z"
+                              Fill="#757575"
+                              Width="8"
+                              Height="4"/>
+                    </Grid>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Arrow" Property="Fill" Value="#2196F3"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter TargetName="Arrow" Property="Fill" Value="#1769AA"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter TargetName="Arrow" Property="Fill" Value="#BDBDBD"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
             <!-- Глобальные стили -->
             <Style TargetType="TextBox">
                 <Setter Property="Margin" Value="5"/>
@@ -73,6 +104,12 @@
                 <Setter Property="Background" Value="#E0E0E0"/>
                 <Setter Property="Padding" Value="5"/>
             </Style>
+            <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+                <Border x:Name="PART_ContentHost"
+            Background="Transparent"
+            Focusable="False"/>
+            </ControlTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
